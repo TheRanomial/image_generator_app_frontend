@@ -1,14 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { filename: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ filename: string }> }
 ) {
-  const filename = params.filename;
-  const backendUrl = process.env.BACKEND_URL || "https://brainy-ardith-theranomial-fa561f77.koyeb.app";
+  const { filename } = await params; 
+  const backendUrl =
+    process.env.BACKEND_URL ||
+    "https://brainy-ardith-theranomial-fa561f77.koyeb.app";
 
   try {
-    // Fix the URL construction - add 'image' path
     const response = await fetch(`${backendUrl}/image/${filename}`);
 
     if (!response.ok) {
@@ -24,7 +25,6 @@ export async function GET(
 
     return new NextResponse(blob, {
       status: 200,
-      statusText: "OK",
       headers,
     });
   } catch (error) {
